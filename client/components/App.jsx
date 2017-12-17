@@ -4,6 +4,48 @@ import FlatButton from 'material-ui/FlatButton';
 import Dialog from 'material-ui/Dialog';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
+import ReactHighcharts from 'react-highcharts';
+
+const makeChartConfig = (data) => {
+    const graphData = [];
+    console.log('data', data);
+    for (let i = 0; i < data.length; i += 1) {
+      graphData.push(data[i].heartBeat);
+    }
+    console.log("graphData", graphData)
+    const config = {
+      chart: {
+        type: 'column'
+      },
+      title: {
+        text: 'chart test'
+      },
+      xAxis: {
+        gridLineWidth: 1
+      },
+      yAxis: [{
+        title: {
+          text: 'Histogram Count'
+        }
+      }, {
+        opposite: true,
+        title: {
+          text: 'Y value'
+        }
+      }],
+      series: [{
+        name: 'Histogram',
+        type: 'column',
+        data: graphData,
+        pointPadding: 0,
+        groupPadding: 0,
+        pointPlacement: 'between',
+        color: '#3498db'
+      }]
+    };
+
+    return config;
+  };
 
 class App extends React.Component {
   constructor(props) {
@@ -13,9 +55,9 @@ class App extends React.Component {
       data: [],
     };
   }
-  // componentDidMount() {
-  //   this.getCharts();
-  // }
+  componentDidMount() {
+    this.getCharts();
+  }
 
   getCharts() {
     fetch('http://localhost:8000/charts', {
@@ -52,6 +94,7 @@ class App extends React.Component {
       <MuiThemeProvider>
         <div>
           here?
+          <ReactHighcharts config={makeChartConfig(this.state.data)}/>
         </div>
       </MuiThemeProvider>
     )
