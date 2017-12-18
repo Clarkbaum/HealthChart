@@ -25,7 +25,7 @@ const makeChartConfig = (data) => {
   console.log("graphData", graphData)
   const config = {
     title: {
-      text: 'HeartBeat History'
+      text: 'Heartbeat History'
     },
     xAxis: {
       type: 'datetime',
@@ -39,11 +39,11 @@ const makeChartConfig = (data) => {
   },
     yAxis: {
       title: {
-        text: 'HeartBeat'
+        text: 'Heartbeat'
       }
     },
     series: [{
-      name: 'HeartBeat',
+      name: 'Heartbeat',
       type: 'line',
       data: graphData,
       pointPadding: 0,
@@ -101,10 +101,21 @@ class App extends React.Component {
           time: 'Mon Dec 18 2017 15:21:00 GMT-0600'
         } 
       ],
+      open: false,
+      newHeartBeat: 0
     };
   }
   componentDidMount() {
     this.getCharts();
+  }
+
+  handleOpen() {
+    this.setState({open: true});
+  }
+
+  handleClose() {
+    this.setState({open: false});
+    this.addCharts()
   }
 
   getCharts() {
@@ -128,7 +139,8 @@ class App extends React.Component {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        heartBeat: 'test post'
+        heartBeat: this.state.newHeartBeat,
+        time: Date()
       })
     })
     .then(console.log("heartBeat added"))
@@ -137,9 +149,19 @@ class App extends React.Component {
     window.location.reload();
   }
 
-  
+  textChange(value) {
+    this.setState({newHeartBeat: value})
+  }
 
   render() {
+    const actions = [
+      <FlatButton
+        label="Ok"
+        primary={true}
+        keyboardFocused={true}
+        onClick={this.handleClose.bind(this)}
+      />,
+    ];
     return (
       <MuiThemeProvider>
         <div>
@@ -148,9 +170,24 @@ class App extends React.Component {
           <div style={styles.topTitle}>Health Charts </div>
           <div style={styles.subTitle}>your heartbeat history</div> 
           <FlatButton 
-            label="Add HeartBeat" 
+            label="Add Heartbeat" 
             style={styles.addHeartBeat}
+            onClick={this.handleOpen.bind(this)}
           />
+          <Dialog
+            title="Please enter in your current Heartbeat"
+            actions={actions}
+            modal={false}
+            open={this.state.open}
+            onRequestClose={this.handleClose}
+          >
+          <TextField 
+            name='newHeartBeat'
+            floatingLabelText='Current Heartbeat'
+            onChange={(e, value) => this.textChange(value)}
+          >
+          </TextField>
+          </Dialog>
         </div>
           <ReactHighcharts config={makeChartConfig(this.state.data)}/>
         </div>
