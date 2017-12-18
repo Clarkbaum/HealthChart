@@ -36,7 +36,7 @@ const makeChartConfig = (data) => {
       title: {
         text: 'Date'
       }
-  },
+    },
     yAxis: {
       title: {
         text: 'Heartbeat'
@@ -113,9 +113,22 @@ class App extends React.Component {
     this.setState({open: true});
   }
 
-  handleClose() {
+  handleCancel() {
     this.setState({open: false});
-    this.addCharts()
+  }
+
+  handleClose() {
+    var currentDate = new Date().getDate()
+    console.log("date", Date())
+    var lastEnteredDate = Number(this.state.data[this.state.data.length - 1].time.split(" ")[2])
+    console.log("lastEnteredDate", lastEnteredDate)
+    console.log("currentDate", currentDate)
+    if(lastEnteredDate === currentDate) {
+      alert("you have already entered in a heart beat for this date")
+    } else {
+      this.setState({open: false});
+      this.addCharts()
+    }
   }
 
   getCharts() {
@@ -156,11 +169,15 @@ class App extends React.Component {
   render() {
     const actions = [
       <FlatButton
+        label="Cancel"
+        primary={true}
+        onClick={this.handleCancel.bind(this)}
+      />,
+      <FlatButton
         label="Ok"
         primary={true}
-        keyboardFocused={true}
         onClick={this.handleClose.bind(this)}
-      />,
+      />
     ];
     return (
       <MuiThemeProvider>
