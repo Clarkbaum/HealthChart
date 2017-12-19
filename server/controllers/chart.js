@@ -18,7 +18,6 @@ exports.update = (request, response) => {
   Chart.findById(request.params.chart).exec()
   .then((data) => {
     const doc = data;
-    console.log("server data", data)
     doc.heartBeat = request.body.heartBeat;
     return doc.save();
   })

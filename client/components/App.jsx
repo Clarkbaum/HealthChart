@@ -50,8 +50,7 @@ const makeChartConfig = (data, handlePointClick) => {
         point: {
           events: {
             click: function (e) {
-              console.log("does this work", e)
-              handlePointClick(e.point.category)
+              handlePointClick(this.id)
             }
           }
         },
@@ -122,7 +121,8 @@ class App extends React.Component {
       open: false,
       openPoint: false,
       newHeartBeat: 0,
-      updateHeartBeat: 0
+      updateHeartBeat: 0,
+      id: 0
     };
   }
   componentDidMount() {
@@ -137,7 +137,7 @@ class App extends React.Component {
     this.setState({open: false});
   }
 
-  handlePointClose() {
+  handlePointCancel() {
     this.setState({openPoint: false});
   }
 
@@ -152,9 +152,16 @@ class App extends React.Component {
     }
   }
 
-  handlePointClick(date) {
-    console.log("got here mofo")
-    this.setState({openPoint: true})
+  handlePointClose() {
+    this.updateCharts()
+  }
+
+  handlePointClick(id) {
+    console.log("got here mofo", id)
+    this.setState({
+      openPoint: true,
+      id: id
+    });
   }
 
   getCharts() {
@@ -188,6 +195,22 @@ class App extends React.Component {
     window.location.reload();
   }
 
+  updateCharts() {
+    fetch('http://localhost:8000/charts/' + this.state.id, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        heartBeat: this.state.updateHeartBeat
+      })
+    })
+    .then(console.log("heartBeat updated"))
+    .catch(err => console.log("error Putting heartBeat", err))
+
+    window.location.reload();
+  }
+
   newHeartBeatChange(value) {
     this.setState({newHeartBeat: value})
   }
@@ -213,10 +236,12 @@ class App extends React.Component {
       <FlatButton
         label="Cancel"
         primary={true}
+        onClick={this.handlePointCancel.bind(this)}
       />,
       <FlatButton
         label="Ok"
         primary={true}
+        onClick={this.handlePointClose.bind(this)}
       />
     ];
     return (
@@ -250,7 +275,7 @@ class App extends React.Component {
             actions={updateActions}
             modal={false}
             open={this.state.openPoint}
-            onRequestClose={this.handlePointClose.bind(this)}
+            onRequestClose={this.handlePointCancel.bind(this)}
           >
             <TextField 
               name='updateHeartBeat'
