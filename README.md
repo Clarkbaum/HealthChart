@@ -25,8 +25,15 @@ npm run client
 ```
 
 open another tab and run 
+
 ```
 mongod
+```
+
+import my dummy data using mongoimport
+
+```
+mongoimport --db healthChart --collection charts --drop --file ~/healthchart/data/charts.json
 ```
 
 navigate to http://localhost:8080/

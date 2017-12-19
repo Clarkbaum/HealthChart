@@ -1,9 +1,12 @@
 import React from 'react';
+
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import FlatButton from 'material-ui/FlatButton';
 import Dialog from 'material-ui/Dialog';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
+import Paper from 'material-ui/Paper';
+
 import ReactHighcharts from 'react-highcharts';
 import MERN from '../assets/MERN.jpg';
 
@@ -43,6 +46,9 @@ const makeChartConfig = (data, handlePointClick) => {
       title: {
         text: 'Heartbeat'
       }
+    },
+    credits: {
+      enabled: false
     },
     plotOptions: {
       series: {
@@ -104,6 +110,11 @@ const styles = {
   },
   addHeartBeat: {
     backgroundColor: '#61dafb'
+  },
+  paper: {
+    marginRight: 30,
+    marginLeft: 30,
+    marginTop: 30
   }
 }
 
@@ -285,7 +296,9 @@ class App extends React.Component {
           </TextField>
           </Dialog>
         </div>
-          <ReactHighcharts config={makeChartConfig(this.state.data, this.handlePointClick.bind(this))}/>
+          <Paper style={styles.paper}>
+            <ReactHighcharts config={makeChartConfig(this.state.data, this.handlePointClick.bind(this))}/>
+          </Paper>
         </div>
       </MuiThemeProvider>
     )
