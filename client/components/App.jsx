@@ -9,6 +9,7 @@ import Paper from 'material-ui/Paper';
 
 import ReactHighcharts from 'react-highcharts';
 import MERN from '../assets/MERN.jpg';
+import styles from '../styles.css';
 
 const convertData = (date) => {
   //Mon Dec 18 2017 15:22:15 GMT-0600 (CST)
@@ -79,43 +80,10 @@ const makeChartConfig = (data, handlePointClick) => {
   return config;
 };
 
-const styles = {
-  addButton: {
-    marginBottom: 20,
-    marginTop: 20,
-  },
-  header: {
-    backgroundColor: '#2d2d2d',
-    height: 230,
-    paddingTop: 30,
-    textAlign: 'center',
-    marginBottom: 20
-  },
-  topTitle: {
-    fontSize: 34,
-    fontWeight: 600,
-    fontFamily: 'proxima-nova,"Helvetica Neue",Helvetica,Roboto,Arial,sans-serif',
-    color: '#61dafb',
-    margin: 0,
-  },
-  subTitle: {
-    fontFamily: 'proxima-nova,"Helvetica Neue",Helvetica,Roboto,Arial,sans-serif',
-    fontSize: 16,
-    marginBottom: 10,
-    color: 'white'
-  },
-  mernLogo: {
-    height: 50,
-    marginRight: 10
-  },
+const stylesInline = {
   addHeartBeat: {
     backgroundColor: '#61dafb'
   },
-  paper: {
-    marginRight: 30,
-    marginLeft: 30,
-    marginTop: 30
-  }
 }
 
 class App extends React.Component {
@@ -258,13 +226,13 @@ class App extends React.Component {
     return (
       <MuiThemeProvider>
         <div>
-        <div style={styles.header}>
-          <img style={styles.mernLogo} className="logo" src={MERN} alt="MERN" />
-          <div style={styles.topTitle}> Health Charts </div>
-          <div style={styles.subTitle}> your heartbeat history </div> 
+        <div className={styles.header}>
+          <img className={styles.mernLogo} src={MERN} alt="MERN" />
+          <div className={styles.topTitle}> Health Charts </div>
+          <div className={styles.subTitle}> your heartbeat history </div> 
           <FlatButton 
             label="Add Heartbeat" 
-            style={styles.addHeartBeat}
+            style={stylesInline.addHeartBeat}
             onClick={this.handleOpen.bind(this)}
           />
           <Dialog
@@ -296,7 +264,7 @@ class App extends React.Component {
           </TextField>
           </Dialog>
         </div>
-          <Paper style={styles.paper}>
+          <Paper className={styles.paper}>
             <ReactHighcharts config={makeChartConfig(this.state.data, this.handlePointClick.bind(this))}/>
           </Paper>
         </div>
