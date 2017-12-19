@@ -1,10 +1,11 @@
 import React from 'react';
 
+import Header from './Header.jsx'
+
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import FlatButton from 'material-ui/FlatButton';
 import Dialog from 'material-ui/Dialog';
 import TextField from 'material-ui/TextField';
-import RaisedButton from 'material-ui/RaisedButton';
 import Paper from 'material-ui/Paper';
 
 import ReactHighcharts from 'react-highcharts';
@@ -79,12 +80,6 @@ const makeChartConfig = (data, handlePointClick) => {
 
   return config;
 };
-
-const stylesInline = {
-  addHeartBeat: {
-    backgroundColor: '#61dafb'
-  },
-}
 
 class App extends React.Component {
   constructor(props) {
@@ -226,15 +221,7 @@ class App extends React.Component {
     return (
       <MuiThemeProvider>
         <div>
-        <div className={styles.header}>
-          <img className={styles.mernLogo} src={MERN} alt="MERN" />
-          <div className={styles.topTitle}> Health Charts </div>
-          <div className={styles.subTitle}> your heartbeat history </div> 
-          <FlatButton 
-            label="Add Heartbeat" 
-            style={stylesInline.addHeartBeat}
-            onClick={this.handleOpen.bind(this)}
-          />
+          <Header handleOpen={this.handleOpen.bind(this)} />
           <Dialog
             title="Please Enter In Your Current Heartbeat"
             actions={addActions}
@@ -263,7 +250,7 @@ class App extends React.Component {
             >
           </TextField>
           </Dialog>
-        </div>
+
           <Paper className={styles.paper}>
             <ReactHighcharts config={makeChartConfig(this.state.data, this.handlePointClick.bind(this))}/>
           </Paper>
