@@ -15,11 +15,11 @@ exports.get = (request, response) => {
 };
 
 exports.update = (request, response) => {
-  console.log("updated")
   Chart.findById(request.params.chart).exec()
   .then((data) => {
     const doc = data;
-    doc.body = request.body.body;
+    console.log("server data", data)
+    doc.heartBeat = request.body.heartBeat;
     return doc.save();
   })
   .then((result) => {

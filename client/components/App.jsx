@@ -16,13 +16,15 @@ const convertData = (date) => {
   return [Number(year), month, Number(day)];
 }
 
-const makeChartConfig = (data) => {
+const makeChartConfig = (data, handlePointClick) => {
   const graphData = [];
-  console.log("convertData" , convertData(data[0].time))
   for (let i = 0; i < data.length; i += 1) {
-    graphData.push([Date.UTC(convertData(data[i].time)[0], convertData(data[i].time)[1], convertData(data[i].time)[2]), data[i].heartBeat]);
+    graphData.push({
+      id: data[i]._id,
+      x: Date.UTC(convertData(data[i].time)[0], convertData(data[i].time)[1], convertData(data[i].time)[2]), 
+      y: data[i].heartBeat
+    });
   }
-  console.log("graphData", graphData)
   const config = {
     title: {
       text: 'Heartbeat History'
@@ -40,6 +42,22 @@ const makeChartConfig = (data) => {
     yAxis: {
       title: {
         text: 'Heartbeat'
+      }
+    },
+    plotOptions: {
+      series: {
+        cursor: 'pointer',
+        point: {
+          events: {
+            click: function (e) {
+              console.log("does this work", e)
+              handlePointClick(e.point.category)
+            }
+          }
+        },
+        marker: {
+          lineWidth: 1
+        }
       }
     },
     series: [{
@@ -102,7 +120,9 @@ class App extends React.Component {
         } 
       ],
       open: false,
-      newHeartBeat: 0
+      openPoint: false,
+      newHeartBeat: 0,
+      updateHeartBeat: 0
     };
   }
   componentDidMount() {
@@ -117,18 +137,24 @@ class App extends React.Component {
     this.setState({open: false});
   }
 
+  handlePointClose() {
+    this.setState({openPoint: false});
+  }
+
   handleClose() {
     var currentDate = new Date().getDate()
-    console.log("date", Date())
     var lastEnteredDate = Number(this.state.data[this.state.data.length - 1].time.split(" ")[2])
-    console.log("lastEnteredDate", lastEnteredDate)
-    console.log("currentDate", currentDate)
     if(lastEnteredDate === currentDate) {
-      alert("you have already entered in a heart beat for this date")
+      alert("you have already entered in a heartbeat for this date")
     } else {
       this.setState({open: false});
       this.addCharts()
     }
+  }
+
+  handlePointClick(date) {
+    console.log("got here mofo")
+    this.setState({openPoint: true})
   }
 
   getCharts() {
@@ -162,12 +188,16 @@ class App extends React.Component {
     window.location.reload();
   }
 
-  textChange(value) {
+  newHeartBeatChange(value) {
     this.setState({newHeartBeat: value})
   }
 
+  updateHeartBeatChange(value) {
+    this.setState({updateHeartBeat: value})
+  }
+
   render() {
-    const actions = [
+    const addActions = [
       <FlatButton
         label="Cancel"
         primary={true}
@@ -179,34 +209,58 @@ class App extends React.Component {
         onClick={this.handleClose.bind(this)}
       />
     ];
+    const updateActions = [
+      <FlatButton
+        label="Cancel"
+        primary={true}
+      />,
+      <FlatButton
+        label="Ok"
+        primary={true}
+      />
+    ];
     return (
       <MuiThemeProvider>
         <div>
         <div style={styles.header}>
           <img style={styles.mernLogo} className="logo" src={MERN} alt="MERN" />
-          <div style={styles.topTitle}>Health Charts </div>
-          <div style={styles.subTitle}>your heartbeat history</div> 
+          <div style={styles.topTitle}> Health Charts </div>
+          <div style={styles.subTitle}> your heartbeat history </div> 
           <FlatButton 
             label="Add Heartbeat" 
             style={styles.addHeartBeat}
             onClick={this.handleOpen.bind(this)}
           />
           <Dialog
-            title="Please enter in your current Heartbeat"
-            actions={actions}
+            title="Please Enter In Your Current Heartbeat"
+            actions={addActions}
             modal={false}
             open={this.state.open}
-            onRequestClose={this.handleClose}
+            onRequestClose={this.handleClose.bind(this)}
           >
-          <TextField 
-            name='newHeartBeat'
-            floatingLabelText='Current Heartbeat'
-            onChange={(e, value) => this.textChange(value)}
+            <TextField 
+              name='newHeartBeat'
+              floatingLabelText='Current Heartbeat'
+              onChange={(e, value) => this.newHeartBeatChange(value)}
+            >
+          </TextField>
+          </Dialog>
+          <Dialog
+            title="Would You Like To Update This Heartbeat?"
+            actions={updateActions}
+            modal={false}
+            open={this.state.openPoint}
+            onRequestClose={this.handlePointClose.bind(this)}
           >
+            <TextField 
+              name='updateHeartBeat'
+              floatingLabelText='Update Heartbeat'
+              onChange={(e, value) => this.updateHeartBeatChange(value)}
+            >
           </TextField>
           </Dialog>
         </div>
-          <ReactHighcharts config={makeChartConfig(this.state.data)}/>
+          <ReactHighcharts config={makeChartConfig(this.state.data, this.handlePointClick.bind(this))}/>
         </div>
       </MuiThemeProvider>
     )
