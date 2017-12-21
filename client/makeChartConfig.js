@@ -12,7 +12,7 @@ export function makeChartConfig (data, handlePointClick) {
   for (let i = 0; i < data.length; i += 1) {
     graphData.push({
       id: data[i]._id,
-      x: Date.UTC(convertData(data[i].time)[0], convertData(data[i].time)[1], convertData(data[i].time)[2]), 
+      x: Date.UTC(...convertData(data[i].time)), 
       y: data[i].heartBeat
     });
   }

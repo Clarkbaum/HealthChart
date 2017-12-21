@@ -63,7 +63,6 @@ class App extends React.Component {
   }
 
   handlePointClick(id) {
-    console.log("got here mofo", id)
     this.setState({
       openPoint: true,
       id: id
